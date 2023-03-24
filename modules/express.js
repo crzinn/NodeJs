@@ -4,6 +4,22 @@ const UserModel = require('../src/models/user.model')
 const app = express()
 app.use(express.json()) //sinalizar pro express que vai receber json nas requisições
 
+app.set('view engine', 'ejs')//usar como view engine o ejs (como se tivesse 'importando' o ejs)
+app.set('views', 'src/views')
+
+//middlewares -> são funções que são executadas antes de qualquer requisição ser feita
+app.use((req, res, next) => {
+    console.log(`Request Type: ${req.method}`)
+    console.log(`Content Type: ${req.headers['content-type']}`)
+    next()
+})
+
+//mostrando ejs na tela
+app.get('/views/users', async (req, res) => {
+    const users = await UserModel.find({})
+    res.render('index', { users })//user: user -> mesmo nome então usei desestruturação
+})
+
 //função assincrona tipo get que pega usuarios do banco de dados
 //se der certo o status code e 200 e ele retorna um json com os usuarios (users)
 //se der errado ele reporta um statuscode 500 e envia uma mensagem de erro com o erro
